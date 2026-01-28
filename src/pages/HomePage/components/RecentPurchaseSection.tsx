@@ -1,7 +1,11 @@
-import { Flex, styled } from 'styled-system/jsx';
+import { useCurrency } from '@/providers/CurrencyProvider';
 import { Spacing, Text } from '@/ui-lib';
+import { Flex, styled } from 'styled-system/jsx';
 
 function RecentPurchaseSection() {
+  const { currency, exchangeRate } = useCurrency();
+  console.log(currency, exchangeRate);
+
   return (
     <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
       <Text variant="H1_Bold">최근 구매한 상품</Text>

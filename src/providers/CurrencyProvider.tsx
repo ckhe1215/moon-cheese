@@ -12,11 +12,10 @@ interface CurrencyContextProps {
 const CurrencyContext = createContext<CurrencyContextProps | null>(null);
 
 export const CurrencyProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currency, setCurrency] = useState<CurrencyType>('USD');
-  const [exchangeRate, setExchangeRate] = useState<number>(1000);
-
   // FIXME: 여기서 불러오는게 옳은지 생각좀 해보자
   const { data } = useSuspenseQuery(exchangeRateQueryOptions());
+  const [exchangeRate, setExchangeRate] = useState<number>(data.exchangeRate.KRW);
+  const [currency, setCurrency] = useState<CurrencyType>('USD');
 
   const currencyToggle = () => {
     setCurrency(currency === 'USD' ? 'KRW' : 'USD');
