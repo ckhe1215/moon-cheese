@@ -1,6 +1,8 @@
 import { type RecentProduct, recentProductListQueryOptions } from '@/api/queryOptions';
+import ErrorSection from '@/components/ErrorSection';
 import { useCurrency } from '@/providers/CurrencyProvider';
 import { Spacing, Text } from '@/ui-lib';
+import { ErrorBoundary } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { Flex, styled } from 'styled-system/jsx';
 
@@ -23,59 +25,61 @@ function RecentPurchaseSection() {
         }}
         direction={'column'}
       >
-        <SuspenseQuery {...recentProductListQueryOptions()}>
-          {({ data }) => {
-            const result = [
-              ...data.recentProducts
-                .reduce((map: Map<number, RecentProduct>, product: RecentProduct) => {
-                  const existing = map.get(product.id);
+        <ErrorBoundary fallback={<ErrorSection />}>
+          <SuspenseQuery {...recentProductListQueryOptions()}>
+            {({ data }) => {
+              const result = [
+                ...data.recentProducts
+                  .reduce((map: Map<number, RecentProduct>, product: RecentProduct) => {
+                    const existing = map.get(product.id);
 
-                  if (existing) {
-                    existing.price += product.price;
-                  } else {
-                    map.set(product.id, { ...product });
-                  }
+                    if (existing) {
+                      existing.price += product.price;
+                    } else {
+                      map.set(product.id, { ...product });
+                    }
 
-                  return map;
-                }, new Map<number, RecentProduct>())
-                .values(),
-            ];
-            return (
-              <>
-                {result.map((item: RecentProduct) => (
-                  <Flex
-                    css={{
-                      gap: 4,
-                    }}
-                  >
-                    <styled.img
-                      src={item.thumbnail}
-                      alt="item"
+                    return map;
+                  }, new Map<number, RecentProduct>())
+                  .values(),
+              ];
+              return (
+                <>
+                  {result.map((item: RecentProduct) => (
+                    <Flex
                       css={{
-                        w: '60px',
-                        h: '60px',
-                        objectFit: 'cover',
-                        rounded: 'xl',
+                        gap: 4,
                       }}
-                    />
-                    <Flex flexDir="column" gap={1}>
-                      <Text variant="B2_Medium">{item.name}</Text>
-                      <Text variant="H1_Bold">
-                        {(() => {
-                          if (currency === 'USD') {
-                            return item.price.toLocaleString('en-US');
-                          }
+                    >
+                      <styled.img
+                        src={item.thumbnail}
+                        alt="item"
+                        css={{
+                          w: '60px',
+                          h: '60px',
+                          objectFit: 'cover',
+                          rounded: 'xl',
+                        }}
+                      />
+                      <Flex flexDir="column" gap={1}>
+                        <Text variant="B2_Medium">{item.name}</Text>
+                        <Text variant="H1_Bold">
+                          {(() => {
+                            if (currency === 'USD') {
+                              return item.price.toLocaleString('en-US');
+                            }
 
-                          return Math.round(item.price * exchangeRate).toLocaleString('kr-KR');
-                        })()}
-                      </Text>
+                            return Math.round(item.price * exchangeRate).toLocaleString('kr-KR');
+                          })()}
+                        </Text>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                ))}
-              </>
-            );
-          }}
-        </SuspenseQuery>
+                  ))}
+                </>
+              );
+            }}
+          </SuspenseQuery>
+        </ErrorBoundary>
       </Flex>
     </styled.section>
   );
