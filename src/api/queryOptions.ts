@@ -24,6 +24,20 @@ export interface GradePoint {
   minPoint: number;
 }
 
+export interface Product {
+  id: number;
+  name: string;
+  category: 'CHEESE' | 'CRACKER' | 'TEA';
+  stock: number;
+  price: number;
+  description: string;
+  detailDescription: string;
+  images: string[];
+  rating: number;
+  isGlutenFree?: boolean;
+  isCaffeineFree?: boolean;
+}
+
 export const exchangeRateQueryOptions = () =>
   queryOptions({
     queryKey: ['exchange-rate'],
@@ -56,6 +70,15 @@ export const gradePointQueryOptions = () =>
     queryKey: ['grade-point'],
     queryFn: async (): Promise<{ gradePointList: GradePoint[] }> => {
       const response = await fetch('/api/grade/point');
+      return response.json();
+    },
+  });
+
+export const productListQueryOptions = () =>
+  queryOptions({
+    queryKey: ['product-list'],
+    queryFn: async (): Promise<{ products: Product[] }> => {
+      const response = await fetch('/api/product/list');
       return response.json();
     },
   });

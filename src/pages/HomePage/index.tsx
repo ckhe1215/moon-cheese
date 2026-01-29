@@ -1,19 +1,22 @@
 import {
   gradePointQueryOptions,
   meQueryOptions,
+  productListQueryOptions,
   recentProductListQueryOptions,
   type GradePoint,
   type RecentProduct,
 } from '@/api/queryOptions';
 import ErrorSection from '@/components/ErrorSection';
+import type { Product } from '@/server/data';
 import { ProgressBar, Spacing, Text } from '@/ui-lib';
-import { ErrorBoundary } from '@suspensive/react';
+import { ErrorBoundary, Suspense } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { groupBy } from 'es-toolkit';
-import { Box, Flex, styled } from 'styled-system/jsx';
+import { Box, Flex, Grid, styled } from 'styled-system/jsx';
 import BannerSection from './components/BannerSection';
-import ProductListSection from './components/ProductListSection';
+import CategorySelector from './components/CategorySelector';
 import RecentPurchasedItem from './components/RecentPurchasedItem';
+import SellingProductItem from './components/SellingProductItem';
 
 function HomePage() {
   return (
@@ -63,9 +66,7 @@ function HomePage() {
 
       <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
         <Text variant="H1_Bold">최근 구매한 상품</Text>
-
         <Spacing size={4} />
-
         <Flex
           css={{
             bg: 'background.01_white',
@@ -93,7 +94,42 @@ function HomePage() {
         </Flex>
       </styled.section>
 
-      <ProductListSection />
+      <styled.section bg="background.01_white">
+        <Box css={{ px: 5, pt: 5, pb: 4 }}>
+          <Text variant="H1_Bold">판매중인 상품</Text>
+        </Box>
+        <CategorySelector
+          options={[
+            { value: 'all', label: '전체' },
+            { value: 'cheese', label: '치즈' },
+            { value: 'cracker', label: '크래커' },
+            { value: 'tea', label: '티' },
+          ]}
+        >
+          {currentTab => (
+            <>
+              <ErrorBoundary fallback={<ErrorSection />}>
+                <Suspense fallback={<>Loading...</>}>
+                  <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
+                    <SuspenseQuery {...productListQueryOptions()}>
+                      {({ data }) => {
+                        const filteredProducts = getFilteredProductsByCategory(data.products, currentTab);
+                        return (
+                          <>
+                            {filteredProducts.map(product => (
+                              <SellingProductItem key={product.id} item={product} />
+                            ))}
+                          </>
+                        );
+                      }}
+                    </SuspenseQuery>
+                  </Grid>
+                </Suspense>
+              </ErrorBoundary>
+            </>
+          )}
+        </CategorySelector>
+      </styled.section>
     </>
   );
 }
@@ -119,6 +155,15 @@ const reducePriceById = (recentProducts: RecentProduct[]) => {
     ...products[0],
     price: products.reduce((acc, item) => acc + item.price, 0),
   }));
+};
+
+const filterByCategory = (category: string, currentTab: string) => {
+  if (currentTab === 'all') return true;
+  return category === currentTab.toUpperCase();
+};
+
+const getFilteredProductsByCategory = (products: Product[], currentTab: string) => {
+  return products.filter(product => filterByCategory(product.category, currentTab));
 };
 
 export default HomePage;

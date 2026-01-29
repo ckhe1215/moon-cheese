@@ -1,6 +1,7 @@
 import type { RecentProduct } from '@/api/queryOptions';
 import { useCurrency } from '@/providers/CurrencyProvider';
 import { Text } from '@/ui-lib';
+import { formatPrice } from '@/utils/formatPrice';
 import { Flex, styled } from 'styled-system/jsx';
 
 export default function RecentPurchasedItem({ item }: { item: RecentProduct }) {
@@ -30,12 +31,3 @@ export default function RecentPurchasedItem({ item }: { item: RecentProduct }) {
     </Flex>
   );
 }
-
-const formatPrice = (price: number, currency: string, exchangeRate: number) => {
-  if (currency === 'USD') {
-    return `$${price.toLocaleString('en-US')}`;
-  }
-
-  const roundedPrice = Math.round(price * exchangeRate);
-  return `${roundedPrice.toLocaleString('ko-KR')}원`;
-};

@@ -5,6 +5,7 @@ import Logo from '@/ui-lib/components/logo';
 import { useLocation, useNavigate } from 'react-router';
 import { Flex, styled } from 'styled-system/jsx';
 import { flex } from 'styled-system/patterns';
+import { useCart } from '../providers/CartProvider';
 import { useCurrency } from '../providers/CurrencyProvider';
 
 export function Header() {
@@ -46,10 +47,12 @@ function BackButton() {
 }
 
 function ShoppingCartButton() {
+  const { cart } = useCart();
   const navigate = useNavigate();
+  const cartItemCount = Object.values(cart).length;
 
   return (
-    <Badge content={9} size="sm" cursor="pointer" onClick={() => navigate('/shopping-cart')}>
+    <Badge content={cartItemCount} size="sm" cursor="pointer" onClick={() => navigate('/shopping-cart')}>
       <ShoppingCartIcon size={22} />
     </Badge>
   );
