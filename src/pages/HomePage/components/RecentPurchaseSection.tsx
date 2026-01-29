@@ -1,10 +1,11 @@
+import { type RecentProduct, recentProductListQueryOptions } from '@/api/queryOptions';
 import { useCurrency } from '@/providers/CurrencyProvider';
 import { Spacing, Text } from '@/ui-lib';
+import { SuspenseQuery } from '@suspensive/react-query';
 import { Flex, styled } from 'styled-system/jsx';
 
 function RecentPurchaseSection() {
   const { currency, exchangeRate } = useCurrency();
-  console.log(currency, exchangeRate);
 
   return (
     <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
@@ -22,47 +23,59 @@ function RecentPurchaseSection() {
         }}
         direction={'column'}
       >
-        <Flex
-          css={{
-            gap: 4,
-          }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-1-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
-            }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">월레스의 오리지널 웬슬리데일</Text>
-            <Text variant="H1_Bold">$12.99</Text>
-          </Flex>
-        </Flex>
+        <SuspenseQuery {...recentProductListQueryOptions()}>
+          {({ data }) => {
+            const result = [
+              ...data.recentProducts
+                .reduce((map: Map<number, RecentProduct>, product: RecentProduct) => {
+                  const existing = map.get(product.id);
 
-        <Flex
-          css={{
-            gap: 4,
+                  if (existing) {
+                    existing.price += product.price;
+                  } else {
+                    map.set(product.id, { ...product });
+                  }
+
+                  return map;
+                }, new Map<number, RecentProduct>())
+                .values(),
+            ];
+            return (
+              <>
+                {result.map((item: RecentProduct) => (
+                  <Flex
+                    css={{
+                      gap: 4,
+                    }}
+                  >
+                    <styled.img
+                      src={item.thumbnail}
+                      alt="item"
+                      css={{
+                        w: '60px',
+                        h: '60px',
+                        objectFit: 'cover',
+                        rounded: 'xl',
+                      }}
+                    />
+                    <Flex flexDir="column" gap={1}>
+                      <Text variant="B2_Medium">{item.name}</Text>
+                      <Text variant="H1_Bold">
+                        {(() => {
+                          if (currency === 'USD') {
+                            return item.price.toLocaleString('en-US');
+                          }
+
+                          return Math.round(item.price * exchangeRate).toLocaleString('kr-KR');
+                        })()}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                ))}
+              </>
+            );
           }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-2-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
-            }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">그랜드 데이 아웃 체다</Text>
-            <Text variant="H1_Bold">$14.87</Text>
-          </Flex>
-        </Flex>
+        </SuspenseQuery>
       </Flex>
     </styled.section>
   );
