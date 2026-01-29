@@ -20,44 +20,42 @@ export interface Me {
 }
 
 export interface GradePoint {
-  gradePointList: Array<{
-    type: 'EXPLORER' | 'PILOT' | 'COMMANDER';
-    minPoint: number;
-  }>;
+  type: 'EXPLORER' | 'PILOT' | 'COMMANDER';
+  minPoint: number;
 }
 
 export const exchangeRateQueryOptions = () =>
   queryOptions({
     queryKey: ['exchange-rate'],
-    queryFn: () =>
-      fetch('/api/exchange-rate')
-        .then(res => res.json())
-        .then(data => data as ExchangeRate),
+    queryFn: async (): Promise<ExchangeRate> => {
+      const response = await fetch('/api/exchange-rate');
+      return response.json();
+    },
   });
 
 export const recentProductListQueryOptions = () =>
   queryOptions({
     queryKey: ['recent-product-list'],
-    queryFn: () =>
-      fetch('/api/recent/product/list')
-        .then(res => res.json())
-        .then(data => data as { recentProducts: RecentProduct[] }),
+    queryFn: async (): Promise<{ recentProducts: RecentProduct[] }> => {
+      const response = await fetch('/api/recent/product/list');
+      return response.json();
+    },
   });
 
 export const meQueryOptions = () =>
   queryOptions({
     queryKey: ['me'],
-    queryFn: () =>
-      fetch('/api/me')
-        .then(res => res.json())
-        .then(data => data as Me),
+    queryFn: async (): Promise<Me> => {
+      const response = await fetch('/api/me');
+      return response.json();
+    },
   });
 
 export const gradePointQueryOptions = () =>
   queryOptions({
     queryKey: ['grade-point'],
-    queryFn: () =>
-      fetch('/api/grade/point')
-        .then(res => res.json())
-        .then(data => data as GradePoint),
+    queryFn: async (): Promise<{ gradePointList: GradePoint[] }> => {
+      const response = await fetch('/api/grade/point');
+      return response.json();
+    },
   });
