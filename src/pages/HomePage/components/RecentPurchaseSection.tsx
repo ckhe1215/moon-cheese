@@ -50,6 +50,7 @@ function RecentPurchaseSection() {
                       css={{
                         gap: 4,
                       }}
+                      key={item.id}
                     >
                       <styled.img
                         src={item.thumbnail}
@@ -66,10 +67,10 @@ function RecentPurchaseSection() {
                         <Text variant="H1_Bold">
                           {(() => {
                             if (currency === 'USD') {
-                              return item.price.toLocaleString('en-US');
+                              return `$${item.price.toLocaleString('en-US')}`;
                             }
 
-                            return Math.round(item.price * exchangeRate).toLocaleString('kr-KR');
+                            return `${Math.round(item.price * exchangeRate).toLocaleString('ko-KR')}원`;
                           })()}
                         </Text>
                       </Flex>
