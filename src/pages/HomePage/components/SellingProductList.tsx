@@ -1,14 +1,11 @@
-import { productListQueryOptions, type Product } from '@/api/queryOptions';
-import ErrorSection from '@/components/ErrorSection';
+import { type Product } from '@/api/queryOptions';
 import { Text } from '@/ui-lib';
-import { ErrorBoundary, Suspense } from '@suspensive/react';
-import { SuspenseQuery } from '@suspensive/react-query';
 import { Box, Grid, styled } from 'styled-system/jsx';
 import CartCounter from './CartCounter';
 import CategorySelector from './CategorySelector';
 import SellingProductItem from './SellingProductItem';
 
-export default function SellingProductList() {
+export default function SellingProductList({ items }: { items: Product[] }) {
   return (
     <styled.section bg="background.01_white">
       <Box css={{ px: 5, pt: 5, pb: 4 }}>
@@ -22,32 +19,16 @@ export default function SellingProductList() {
           { value: 'tea', label: '티' },
         ]}
       >
-        {currentTab => (
-          <>
-            <ErrorBoundary fallback={<ErrorSection />}>
-              <Suspense fallback={<>Loading...</>}>
-                <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
-                  <SuspenseQuery {...productListQueryOptions()}>
-                    {({ data }) => {
-                      const filteredProducts = getFilteredProductsByCategory(data.products, currentTab);
-                      return (
-                        <>
-                          {filteredProducts.map(product => (
-                            <SellingProductItem
-                              key={product.id}
-                              item={product}
-                              counter={<CartCounter product={product} />}
-                            />
-                          ))}
-                        </>
-                      );
-                    }}
-                  </SuspenseQuery>
-                </Grid>
-              </Suspense>
-            </ErrorBoundary>
-          </>
-        )}
+        {currentTab => {
+          const filteredProducts = getFilteredProductsByCategory(items, currentTab);
+          return (
+            <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
+              {filteredProducts.map(product => (
+                <SellingProductItem key={product.id} item={product} counter={<CartCounter product={product} />} />
+              ))}
+            </Grid>
+          );
+        }}
       </CategorySelector>
     </styled.section>
   );
