@@ -82,3 +82,21 @@ export const productListQueryOptions = () =>
       return response.json();
     },
   });
+
+export const productIdQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['product', id],
+    queryFn: async (): Promise<Product> => {
+      const response = await fetch(`/api/product/${id}`);
+      return response.json();
+    },
+  });
+
+export const produtRecommendIdQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['product-recommend', id],
+    queryFn: async (): Promise<{ recommendedProductIds: number[] }> => {
+      const response = await fetch(`/api/product/recommend/${id}`);
+      return response.json();
+    },
+  });

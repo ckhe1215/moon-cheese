@@ -1,29 +1,66 @@
-import { Spacing } from '@/ui-lib';
+import { productIdQueryOptions } from '@/api/queryOptions';
+import { Spacing, type TagType } from '@/ui-lib';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useParams } from 'react-router';
+import CartButton from './components/CartButton';
+import CartCounter from './components/CartCounter';
 import ProductDetailSection from './components/ProductDetailSection';
 import ProductInfoSection from './components/ProductInfoSection';
 import RecommendationSection from './components/RecommendationSection';
 import ThumbnailSection from './components/ThumbnailSection';
 
+export const TAG_TYPES: TagType[] = ['cheese', 'cracker', 'tea'];
+
+export const isTagType = (type: string): type is TagType => {
+  return TAG_TYPES.includes(type as TagType);
+};
+
 function ProductDetailPage() {
+  const { id } = useParams();
+  const { data: product } = useSuspenseQuery(productIdQueryOptions(Number(id)));
+
+  const category = product.category.toLowerCase();
+  const safeCategory: TagType = isTagType(category) ? category : 'cheese';
+
+  const [count, setCount] = useState(0);
+
+  const handleCountPlus = () => {
+    if (count < product.stock) {
+      setCount(prev => prev + 1);
+    }
+  };
+
+  const handleCountMinus = () => {
+    if (count > 0) {
+      setCount(prev => prev - 1);
+    }
+  };
+
   return (
     <>
-      <ThumbnailSection
-        images={[
-          '/moon-cheese-images/cracker-1-1.jpg',
-          '/moon-cheese-images/cracker-1-2.jpg',
-          '/moon-cheese-images/cracker-1-3.jpg',
-          '/moon-cheese-images/cracker-1-4.jpg',
-        ]}
+      <ThumbnailSection images={product.images} />
+      <ProductInfoSection
+        name={product.name}
+        category={safeCategory}
+        rating={product.rating}
+        price={product.price}
+        quantity={product.stock}
+        counter={
+          <CartCounter
+            productId={product.id}
+            stock={product.stock}
+            count={count}
+            handleCountPlus={handleCountPlus}
+            handleCountMinus={handleCountMinus}
+          />
+        }
+        addToCartButton={<CartButton productId={product.id} count={count} />}
       />
-      <ProductInfoSection name={'치즈홀 크래커'} category={'cracker'} rating={4.0} price={10.85} quantity={2} />
 
       <Spacing size={2.5} />
 
-      <ProductDetailSection
-        description={
-          '"달 표면에서 가 수확한 특별한 구멍낸 크래커." 달의 분화구를 연상시키는 다지한과 고소한 풍미가 특징인 크래커. 치즈와의 궁합을 고려한 절묘한 비율로, 어느 데어링 메뉴도 잘 어울립니다.'
-        }
-      />
+      <ProductDetailSection description={product.description} />
 
       <Spacing size={2.5} />
 
