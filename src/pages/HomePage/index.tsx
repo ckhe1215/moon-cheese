@@ -1,5 +1,7 @@
+import { recentProductListQueryOptions } from '@/api/queryOptions';
 import ErrorSection from '@/components/ErrorSection';
 import { ErrorBoundary } from '@suspensive/react';
+import { SuspenseQuery } from '@suspensive/react-query';
 import BannerSection from './components/BannerSection';
 import CurrentLevelSection from './components/CurrentLevelSection';
 import GetPointInfo from './components/GetPointInfo';
@@ -23,7 +25,12 @@ function HomePage() {
         </GetPointInfo>
       </ErrorBoundary>
 
-      <RecentPurchasedProductList />
+      <ErrorBoundary fallback={<ErrorSection />}>
+        <SuspenseQuery {...recentProductListQueryOptions()}>
+          {({ data }) => <RecentPurchasedProductList items={data.recentProducts} />}
+        </SuspenseQuery>
+      </ErrorBoundary>
+
       <SellingProductList />
     </>
   );
