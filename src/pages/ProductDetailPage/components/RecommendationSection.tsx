@@ -1,7 +1,6 @@
 import { productIdQueryOptions, productRecommendIdQueryOptions } from '@/api/queryOptions';
-import { useCurrency } from '@/providers/CurrencyProvider';
+import PriceDisplay from '@/components/PriceDisplay';
 import { Spacing, Text } from '@/ui-lib';
-import { formatPrice } from '@/utils/formatPrice';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
@@ -10,7 +9,6 @@ import RecommendationProductItem from './RecommendationProductItem';
 
 function RecommendationSection({ productId }: { productId: number }) {
   const navigate = useNavigate();
-  const { currency, exchangeRate } = useCurrency();
 
   const { data: recommendedProducts } = useSuspenseQuery(productRecommendIdQueryOptions(productId));
 
@@ -32,7 +30,7 @@ function RecommendationSection({ productId }: { productId: number }) {
                 <RecommendationProductItem.Image src={product.images[0]} alt={product.name} />
                 <RecommendationProductItem.Info name={product.name} rating={product.rating} />
                 <RecommendationProductItem.Price>
-                  {formatPrice(product.price, currency, exchangeRate)}
+                  <PriceDisplay price={product.price} />
                 </RecommendationProductItem.Price>
               </RecommendationProductItem.Root>
             )}
