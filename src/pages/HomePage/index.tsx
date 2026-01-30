@@ -26,7 +26,7 @@ function HomePage() {
       <styled.section css={{ px: 5, py: 4 }}>
         <Text variant="H1_Bold">현재 등급</Text>
         <Spacing size={4} />
-        <ErrorBoundary fallback={<ErrorSection />}>
+        <ErrorBoundary fallback={({ reset }) => <ErrorSection onRetry={reset} />}>
           <SuspenseQuery {...meQueryOptions()}>
             {({ data: meData }) => (
               <Box bg="background.01_white" css={{ px: 5, py: 4, rounded: '2xl' }}>

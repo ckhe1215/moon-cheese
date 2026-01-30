@@ -7,7 +7,7 @@ import router from './router';
 function App() {
   return (
     <GlobalProvider>
-      <ErrorBoundary fallback={<ErrorSection />}>
+      <ErrorBoundary fallback={({ reset }) => <ErrorSection onRetry={reset} />}>
         <Suspense fallback={<div>Loading...</div>}>
           <RouterProvider router={router} />
         </Suspense>
