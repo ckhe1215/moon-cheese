@@ -64,7 +64,7 @@ function ProductDetailPage() {
 
       <Spacing size={2.5} />
 
-      <RecommendationSection />
+      <RecommendationSection productId={product.id} />
     </>
   );
 }

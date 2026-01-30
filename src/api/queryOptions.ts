@@ -92,10 +92,10 @@ export const productIdQueryOptions = (id: number) =>
     },
   });
 
-export const produtRecommendIdQueryOptions = (id: number) =>
+export const productRecommendIdQueryOptions = (id: number) =>
   queryOptions({
     queryKey: ['product-recommend', id],
-    queryFn: async (): Promise<{ recommendedProductIds: number[] }> => {
+    queryFn: async (): Promise<{ recommendProductIds: number[] }> => {
       const response = await fetch(`/api/product/recommend/${id}`);
       return response.json();
     },
