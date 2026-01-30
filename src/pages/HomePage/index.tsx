@@ -14,6 +14,7 @@ import { SuspenseQuery } from '@suspensive/react-query';
 import { groupBy } from 'es-toolkit';
 import { Box, Flex, Grid, styled } from 'styled-system/jsx';
 import BannerSection from './components/BannerSection';
+import CartCounter from './components/CartCounter';
 import CategorySelector from './components/CategorySelector';
 import RecentPurchasedItem from './components/RecentPurchasedItem';
 import SellingProductItem from './components/SellingProductItem';
@@ -117,7 +118,11 @@ function HomePage() {
                         return (
                           <>
                             {filteredProducts.map(product => (
-                              <SellingProductItem key={product.id} item={product} />
+                              <SellingProductItem
+                                key={product.id}
+                                item={product}
+                                counter={<CartCounter product={product} />}
+                              />
                             ))}
                           </>
                         );

@@ -1,31 +1,16 @@
 import type { Product } from '@/api/queryOptions';
-import { useCart } from '@/providers/CartProvider';
 import { useCurrency } from '@/providers/CurrencyProvider';
-import { Counter } from '@/ui-lib';
 import { formatPrice } from '@/utils/formatPrice';
 import { useNavigate } from 'react-router';
 import ProductItem from './ProductItem';
 
-export default function SellingProductItem({ item }: { item: Product }) {
+export default function SellingProductItem({ item, counter }: { item: Product; counter?: React.ReactNode }) {
   const { currency, exchangeRate } = useCurrency();
-  const { cart, addToCart, removeFromCart } = useCart();
   const navigate = useNavigate();
 
   const handleClickProduct = (productId: number) => {
     navigate(`/product/${productId}`);
   };
-
-  const handleAddToCart = (productId: number) => {
-    addToCart(productId);
-  };
-
-  const handleRemoveFromCart = (productId: number) => {
-    removeFromCart(productId);
-  };
-
-  const cartItemCount = cart[item.id] ?? 0;
-  const isEmptyCart = cartItemCount === 0;
-  const isMaxStock = cartItemCount >= item.stock;
 
   return (
     <ProductItem.Root key={item.id} onClick={() => handleClickProduct(item.id)}>
@@ -39,11 +24,7 @@ export default function SellingProductItem({ item }: { item: Product }) {
         {item.isGlutenFree && <ProductItem.FreeTag type="gluten" />}
         {item.isCaffeineFree && <ProductItem.FreeTag type="caffeine" />}
       </ProductItem.Meta>
-      <Counter.Root>
-        <Counter.Minus onClick={() => handleRemoveFromCart(item.id)} disabled={isEmptyCart} />
-        <Counter.Display value={cartItemCount} />
-        <Counter.Plus onClick={() => handleAddToCart(item.id)} disabled={isMaxStock} />
-      </Counter.Root>
+      {counter}
     </ProductItem.Root>
   );
 }
