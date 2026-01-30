@@ -9,20 +9,20 @@ import RecentPurchasedItem from './RecentPurchasedItem';
 
 export default function RecentPurchasedProductList() {
   return (
-    <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
-      <Text variant="H1_Bold">최근 구매한 상품</Text>
-      <Spacing size={4} />
-      <Flex
-        css={{
-          bg: 'background.01_white',
-          px: 5,
-          py: 4,
-          gap: 4,
-          rounded: '2xl',
-        }}
-        direction={'column'}
-      >
-        <ErrorBoundary fallback={<ErrorSection />}>
+    <ErrorBoundary fallback={<ErrorSection />}>
+      <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
+        <Text variant="H1_Bold">최근 구매한 상품</Text>
+        <Spacing size={4} />
+        <Flex
+          css={{
+            bg: 'background.01_white',
+            px: 5,
+            py: 4,
+            gap: 4,
+            rounded: '2xl',
+          }}
+          direction={'column'}
+        >
           <SuspenseQuery {...recentProductListQueryOptions()}>
             {({ data }) => {
               const result = reducePriceById(data.recentProducts);
@@ -35,9 +35,9 @@ export default function RecentPurchasedProductList() {
               );
             }}
           </SuspenseQuery>
-        </ErrorBoundary>
-      </Flex>
-    </styled.section>
+        </Flex>
+      </styled.section>
+    </ErrorBoundary>
   );
 }
 
