@@ -1,10 +1,8 @@
 import { productIdQueryOptions } from '@/api/queryOptions';
 import { Spacing, type TagType } from '@/ui-lib';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useParams } from 'react-router';
-import CartButton from './components/CartButton';
-import CartCounter from './components/CartCounter';
+import { CartActionProvider } from './components/CartActionProvider';
 import ProductDetailSection from './components/ProductDetailSection';
 import ProductInfoSection from './components/ProductInfoSection';
 import RecommendationSection from './components/RecommendationSection';
@@ -23,40 +21,20 @@ function ProductDetailPage() {
   const category = product.category.toLowerCase();
   const safeCategory: TagType = isTagType(category) ? category : 'cheese';
 
-  const [count, setCount] = useState(0);
-
-  const handleCountPlus = () => {
-    if (count < product.stock) {
-      setCount(prev => prev + 1);
-    }
-  };
-
-  const handleCountMinus = () => {
-    if (count > 0) {
-      setCount(prev => prev - 1);
-    }
-  };
-
   return (
     <>
       <ThumbnailSection images={product.images} />
-      <ProductInfoSection
-        name={product.name}
-        category={safeCategory}
-        rating={product.rating}
-        price={product.price}
-        quantity={product.stock}
-        counter={
-          <CartCounter
-            productId={product.id}
-            stock={product.stock}
-            count={count}
-            handleCountPlus={handleCountPlus}
-            handleCountMinus={handleCountMinus}
-          />
-        }
-        addToCartButton={<CartButton productId={product.id} count={count} />}
-      />
+      <CartActionProvider>
+        <ProductInfoSection
+          name={product.name}
+          category={safeCategory}
+          rating={product.rating}
+          price={product.price}
+          quantity={product.stock}
+          counter={<CartActionProvider.Counter productId={product.id} stock={product.stock} />}
+          addToCartButton={<CartActionProvider.Button productId={product.id} />}
+        />
+      </CartActionProvider>
 
       <Spacing size={2.5} />
 
