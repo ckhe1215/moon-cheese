@@ -2,7 +2,7 @@ import { useCart } from '@/providers/CartProvider';
 import type { Product } from '@/server/data';
 import { Counter } from '@/ui-lib';
 
-export default function CartCounter({ product }: { product: Product }) {
+export default function CartCounter({ product, min, max }: { product: Product; min?: number; max?: number }) {
   const { cart, addToCart, removeFromCart } = useCart();
 
   const handleAddToCart = (productId: number) => {
@@ -14,8 +14,8 @@ export default function CartCounter({ product }: { product: Product }) {
   };
 
   const cartItemCount = cart[product.id] ?? 0;
-  const isEmptyCart = cartItemCount === 0;
-  const isMaxStock = cartItemCount >= product.stock;
+  const isEmptyCart = cartItemCount === (min ?? 1);
+  const isMaxStock = cartItemCount >= (max ?? product.stock);
 
   return (
     <Counter.Root>

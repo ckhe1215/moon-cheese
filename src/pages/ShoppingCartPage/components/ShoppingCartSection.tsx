@@ -1,14 +1,15 @@
 import { productIdQueryOptions } from '@/api/queryOptions';
+import CartCounter from '@/components/CartCounter';
 import PriceDisplay from '@/components/PriceDisplay';
 import { isTagType } from '@/pages/ProductDetailPage/components/ProductInfoSection';
 import { useCart } from '@/providers/CartProvider';
-import { Button, Counter, Spacing, Text, type TagType } from '@/ui-lib';
+import { Button, Spacing, Text, type TagType } from '@/ui-lib';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { Divider, Flex, Stack, styled } from 'styled-system/jsx';
 import ShoppingCartItem from './ShoppingCartItem';
 
 function ShoppingCartSection() {
-  const { cart, addToCart, removeFromCart, removeAllFromCart, emptyCart } = useCart();
+  const { cart, removeAllFromCart, emptyCart } = useCart();
 
   return (
     <styled.section css={{ p: 5, bgColor: 'background.01_white' }}>
@@ -28,7 +29,7 @@ function ShoppingCartSection() {
           rounded: '2xl',
         }}
       >
-        {Object.entries(cart).map(([productId, count], index) => {
+        {Object.entries(cart).map(([productId], index) => {
           return (
             <SuspenseQuery {...productIdQueryOptions(Number(productId))}>
               {({ data }) => {
@@ -52,21 +53,7 @@ function ShoppingCartSection() {
                           <ShoppingCartItem.Price>
                             <PriceDisplay price={data.price} />
                           </ShoppingCartItem.Price>
-                          <Counter.Root>
-                            <Counter.Minus
-                              onClick={() => {
-                                removeFromCart(Number(productId));
-                              }}
-                              disabled={count === 1}
-                            />
-                            <Counter.Display value={count} />
-                            <Counter.Plus
-                              onClick={() => {
-                                addToCart(Number(productId));
-                              }}
-                              disabled={count === data.stock}
-                            />
-                          </Counter.Root>
+                          <CartCounter product={data} min={1} />
                         </ShoppingCartItem.Footer>
                       </ShoppingCartItem.Content>
                     </ShoppingCartItem.Root>

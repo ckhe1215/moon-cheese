@@ -1,7 +1,7 @@
 import type { Product } from '@/api/queryOptions';
+import CartCounter from '@/components/CartCounter';
 import PriceDisplay from '@/components/PriceDisplay';
 import { Link } from 'react-router';
-import CartCounter from './CartCounter';
 import ProductItem from './ProductItem';
 
 function SellingProductItem({ product, bottomAddOn }: { product: Product; bottomAddOn?: React.ReactNode }) {
