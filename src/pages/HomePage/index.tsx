@@ -12,7 +12,6 @@ import { Box, Flex, Grid, styled } from 'styled-system/jsx';
 import BannerSection from './components/BannerSection';
 import CategorySelector, { type TabType } from './components/CategorySelector';
 import CurrentLevelSection from './components/CurrentLevelSection';
-import GetPointInfo from './components/GetPointInfo';
 import RecentPurchasedProductItem from './components/RecentPurchasedProductItem';
 import { CheeseItem, CrackerItem, TeaItem } from './components/SellingProductItem';
 
@@ -20,18 +19,7 @@ function HomePage() {
   return (
     <>
       <BannerSection />
-      <AsyncBoundary>
-        <GetPointInfo>
-          {({ currentGrade, currentPoint, leftPointToNextGrade, progress }) => (
-            <CurrentLevelSection
-              currentGrade={currentGrade}
-              currentPoint={currentPoint}
-              leftPointToNextGrade={leftPointToNextGrade}
-              progress={progress}
-            />
-          )}
-        </GetPointInfo>
-      </AsyncBoundary>
+      <CurrentLevelSection />
 
       <styled.section css={{ px: 5, pt: 4, pb: 8 }}>
         <Text variant="H1_Bold">최근 구매한 상품</Text>
