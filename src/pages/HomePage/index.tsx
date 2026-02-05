@@ -1,6 +1,6 @@
 import { productListQueryOptions, recentProductListQueryOptions } from '@/api/queryOptions';
+import AsyncBoundary from '@/components/AsyncBoundary';
 import ErrorSection from '@/components/ErrorSection';
-import { ErrorBoundary } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import BannerSection from './components/BannerSection';
 import CurrentLevelSection from './components/CurrentLevelSection';
@@ -12,7 +12,7 @@ function HomePage() {
   return (
     <>
       <BannerSection />
-      <ErrorBoundary fallback={({ reset }) => <ErrorSection onRetry={reset} />}>
+      <AsyncBoundary fallback={<ErrorSection />}>
         <GetPointInfo>
           {({ currentGrade, currentPoint, leftPointToNextGrade, progress }) => (
             <CurrentLevelSection
@@ -23,19 +23,19 @@ function HomePage() {
             />
           )}
         </GetPointInfo>
-      </ErrorBoundary>
+      </AsyncBoundary>
 
-      <ErrorBoundary fallback={({ reset }) => <ErrorSection onRetry={reset} />}>
+      <AsyncBoundary fallback={<ErrorSection />}>
         <SuspenseQuery {...recentProductListQueryOptions()}>
           {({ data }) => <RecentPurchasedProductList items={data.recentProducts} />}
         </SuspenseQuery>
-      </ErrorBoundary>
+      </AsyncBoundary>
 
-      <ErrorBoundary fallback={({ reset }) => <ErrorSection onRetry={reset} />}>
+      <AsyncBoundary fallback={<ErrorSection />}>
         <SuspenseQuery {...productListQueryOptions()}>
           {({ data }) => <SellingProductList items={data.products} />}
         </SuspenseQuery>
-      </ErrorBoundary>
+      </AsyncBoundary>
     </>
   );
 }
