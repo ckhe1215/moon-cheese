@@ -1,6 +1,6 @@
 import type { Product } from '@/api/queryOptions';
 import PriceDisplay from '@/components/PriceDisplay';
-import { Link } from 'lucide-react';
+import { Link } from 'react-router';
 import CartCounter from './CartCounter';
 import ProductItem from './ProductItem';
 

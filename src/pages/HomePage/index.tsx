@@ -1,6 +1,5 @@
 import { productListQueryOptions, recentProductListQueryOptions, type Product } from '@/api/queryOptions';
 import AsyncBoundary from '@/components/AsyncBoundary';
-import ErrorSection from '@/components/ErrorSection';
 import { Text } from '@/ui-lib';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { Box, Grid, styled } from 'styled-system/jsx';
@@ -15,7 +14,7 @@ function HomePage() {
   return (
     <>
       <BannerSection />
-      <AsyncBoundary fallback={<ErrorSection />}>
+      <AsyncBoundary>
         <GetPointInfo>
           {({ currentGrade, currentPoint, leftPointToNextGrade, progress }) => (
             <CurrentLevelSection
@@ -28,15 +27,15 @@ function HomePage() {
         </GetPointInfo>
       </AsyncBoundary>
 
-      <AsyncBoundary fallback={<ErrorSection />}>
+      <AsyncBoundary>
         <SuspenseQuery {...recentProductListQueryOptions()}>
           {({ data }) => <RecentPurchasedProductList items={data.recentProducts} />}
         </SuspenseQuery>
       </AsyncBoundary>
 
-      <AsyncBoundary fallback={<ErrorSection />}>
+      <AsyncBoundary>
         <SuspenseQuery {...productListQueryOptions()}>
-          {({ data: { products } }) => (
+          {({ data }) => (
             <styled.section bg="background.01_white">
               <Box css={{ px: 5, pt: 5, pb: 4 }}>
                 <Text variant="H1_Bold">판매중인 상품</Text>
@@ -51,7 +50,7 @@ function HomePage() {
               >
                 {currentTab => (
                   <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
-                    {products
+                    {data.products
                       .filter(product => matchesCategory(product.category, currentTab))
                       .map(product => {
                         switch (product.category) {

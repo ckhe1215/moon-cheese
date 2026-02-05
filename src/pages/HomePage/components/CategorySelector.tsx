@@ -8,7 +8,7 @@ export default function CategorySelector({
   options: { value: string; label: string }[];
   children: (currentTab: string) => React.ReactNode;
 }) {
-  const [currentTab, setCurrentTab] = useState('all');
+  const [currentTab, setCurrentTab] = useState('ALL');
 
   return (
     <>

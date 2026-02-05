@@ -7,7 +7,7 @@ export default function AsyncBoundary({
   fallback,
 }: {
   children: React.ReactNode;
-  fallback: React.ReactNode;
+  fallback?: React.ReactNode;
 }) {
   return (
     <QueryErrorResetBoundary>
