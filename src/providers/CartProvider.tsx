@@ -6,6 +6,7 @@ interface CartContextProps {
   addToCartWithCount: (productId: number, count: number) => void;
   removeFromCart: (productId: number) => void;
   removeAllFromCart: (productId: number) => void;
+  emptyCart: () => void;
 }
 
 const CartContext = createContext<CartContextProps | null>(null);
@@ -42,8 +43,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  const emptyCart = () => {
+    setCart({});
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, addToCartWithCount, removeFromCart, removeAllFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, addToCartWithCount, removeFromCart, removeAllFromCart, emptyCart }}>
       {children}
     </CartContext.Provider>
   );
