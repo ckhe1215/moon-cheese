@@ -6,21 +6,22 @@ import EmptyCartSection from './components/EmptyCartSection';
 import ShoppingCartSection from './components/ShoppingCartSection';
 
 function ShoppingCartPage() {
-  const { cart } = useCart();
-
   return (
     <AsyncBoundary>
-      {Object.keys(cart).length === 0 ? (
-        <EmptyCartSection />
-      ) : (
-        <>
-          <ShoppingCartSection />
-          <DeliveryMethodSection />
-          <CheckoutSection />
-        </>
-      )}
+      <EmptyCartGuard>
+        <ShoppingCartSection />
+        <DeliveryMethodSection />
+        <CheckoutSection />
+      </EmptyCartGuard>
     </AsyncBoundary>
   );
+}
+
+function EmptyCartGuard({ children }: { children: React.ReactNode }) {
+  const { cart } = useCart();
+  const isEmpty = Object.keys(cart).length === 0;
+
+  return isEmpty ? <EmptyCartSection /> : children;
 }
 
 export default ShoppingCartPage;
