@@ -14,8 +14,10 @@ const CartActionContext = createContext<CartActionContextType>({
   handleCountPlus: () => {},
 });
 
-export const CartActionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [count, setCount] = useState(0);
+export const CartActionProvider = ({ productId, children }: { productId: number; children: React.ReactNode }) => {
+  const { cart } = useCart();
+  const cartItemCount = cart[productId] ?? 0;
+  const [count, setCount] = useState(cartItemCount);
 
   const handleCountMinus = () => {
     if (count > 0) {

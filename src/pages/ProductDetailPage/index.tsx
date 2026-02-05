@@ -20,7 +20,7 @@ function ProductDetailPage() {
           {({ data: product }) => (
             <>
               <ThumbnailSection images={product.images} />
-              <CartActionProvider>
+              <CartActionProvider key={product.id} productId={product.id}>
                 <ProductInfoSection
                   product={product}
                   counter={<CartActionProvider.Counter productId={product.id} stock={product.stock} />}
