@@ -1,48 +1,57 @@
 import { productIdQueryOptions } from '@/api/queryOptions';
-import { Spacing, type TagType } from '@/ui-lib';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import AsyncBoundary from '@/components/AsyncBoundary';
+import { Spacing, Text } from '@/ui-lib';
+import { SuspenseQuery } from '@suspensive/react-query';
 import { useParams } from 'react-router';
+import { HStack, styled } from 'styled-system/jsx';
 import { CartActionProvider } from './components/CartActionProvider';
-import ProductDetailSection from './components/ProductDetailSection';
+import GetRecommendedProducts from './components/GetRecommendedProducts';
 import ProductInfoSection from './components/ProductInfoSection';
-import RecommendationSection from './components/RecommendationSection';
+import RecommendationItem from './components/RecommendationItem';
 import ThumbnailSection from './components/ThumbnailSection';
-
-export const TAG_TYPES: TagType[] = ['cheese', 'cracker', 'tea'];
-
-export const isTagType = (type: string): type is TagType => {
-  return TAG_TYPES.includes(type as TagType);
-};
 
 function ProductDetailPage() {
   const { id } = useParams();
-  const { data: product } = useSuspenseQuery(productIdQueryOptions(Number(id)));
-
-  const category = product.category.toLowerCase();
-  const safeCategory: TagType = isTagType(category) ? category : 'cheese';
 
   return (
     <>
-      <ThumbnailSection images={product.images} />
-      <CartActionProvider>
-        <ProductInfoSection
-          name={product.name}
-          category={safeCategory}
-          rating={product.rating}
-          price={product.price}
-          quantity={product.stock}
-          counter={<CartActionProvider.Counter productId={product.id} stock={product.stock} />}
-          addToCartButton={<CartActionProvider.Button productId={product.id} />}
-        />
-      </CartActionProvider>
-
+      <AsyncBoundary>
+        <SuspenseQuery {...productIdQueryOptions(Number(id))}>
+          {({ data: product }) => (
+            <>
+              <ThumbnailSection images={product.images} />
+              <CartActionProvider>
+                <ProductInfoSection
+                  product={product}
+                  counter={<CartActionProvider.Counter productId={product.id} stock={product.stock} />}
+                  addToCartButton={<CartActionProvider.Button productId={product.id} />}
+                />
+              </CartActionProvider>
+              <Spacing size={2.5} />
+              <styled.section css={{ bg: 'background.01_white', px: 5, pt: 5, pb: 6 }}>
+                <Text variant="H2_Bold">상세 정보</Text>
+                <Spacing size={4} />
+                <Text variant="B2_Regular" color="neutral.02_gray">
+                  {product.description}
+                </Text>
+              </styled.section>
+            </>
+          )}
+        </SuspenseQuery>
+      </AsyncBoundary>
       <Spacing size={2.5} />
 
-      <ProductDetailSection description={product.description} />
-
-      <Spacing size={2.5} />
-
-      <RecommendationSection productId={product.id} />
+      <AsyncBoundary>
+        <styled.section css={{ bg: 'background.01_white', px: 5, pt: 5, pb: 6 }}>
+          <Text variant="H2_Bold">추천 제품</Text>
+          <Spacing size={4} />
+          <HStack gap={1.5} overflowX="auto">
+            <GetRecommendedProducts productId={Number(id)}>
+              {product => <RecommendationItem product={product} />}
+            </GetRecommendedProducts>
+          </HStack>
+        </styled.section>
+      </AsyncBoundary>
     </>
   );
 }
