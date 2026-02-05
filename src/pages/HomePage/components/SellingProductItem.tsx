@@ -1,30 +1,45 @@
 import type { Product } from '@/api/queryOptions';
 import PriceDisplay from '@/components/PriceDisplay';
-import { useNavigate } from 'react-router';
+import { Link } from 'lucide-react';
+import CartCounter from './CartCounter';
 import ProductItem from './ProductItem';
 
-export default function SellingProductItem({ item, counter }: { item: Product; counter?: React.ReactNode }) {
-  const navigate = useNavigate();
-
-  const handleClickProduct = (productId: number) => {
-    navigate(`/product/${productId}`);
-  };
-
+function SellingProductItem({ product, bottomAddOn }: { product: Product; bottomAddOn?: React.ReactNode }) {
   return (
-    <ProductItem.Root key={item.id} onClick={() => handleClickProduct(item.id)}>
-      <ProductItem.Image src={item.images[0]} alt={item.name} />
-      <ProductItem.Info title={item.name} description={item.description} />
-      <ProductItem.Meta>
-        <ProductItem.MetaLeft>
-          <ProductItem.Rating rating={item.rating} />
-          <ProductItem.Price>
-            <PriceDisplay price={item.price} />
-          </ProductItem.Price>
-        </ProductItem.MetaLeft>
-        {item.isGlutenFree && <ProductItem.FreeTag type="gluten" />}
-        {item.isCaffeineFree && <ProductItem.FreeTag type="caffeine" />}
-      </ProductItem.Meta>
-      {counter}
-    </ProductItem.Root>
+    <Link to={`/product/${product.id}`}>
+      <ProductItem.Root key={product.id}>
+        <ProductItem.Image src={product.images[0]} alt={product.name} />
+        <ProductItem.Info title={product.name} description={product.description} />
+        <ProductItem.Meta>
+          <ProductItem.MetaLeft>
+            <ProductItem.Rating rating={product.rating} />
+            <ProductItem.Price>
+              <PriceDisplay price={product.price} />
+            </ProductItem.Price>
+          </ProductItem.MetaLeft>
+          {bottomAddOn}
+        </ProductItem.Meta>
+        <CartCounter product={product} />
+      </ProductItem.Root>
+    </Link>
+  );
+}
+
+export function CheeseItem({ product }: { product: Product }) {
+  return <SellingProductItem product={product} />;
+}
+
+export function CrackerItem({ product }: { product: Product }) {
+  return (
+    <SellingProductItem product={product} bottomAddOn={product.isGlutenFree && <ProductItem.FreeTag type="gluten" />} />
+  );
+}
+
+export function TeaItem({ product }: { product: Product }) {
+  return (
+    <SellingProductItem
+      product={product}
+      bottomAddOn={product.isCaffeineFree && <ProductItem.FreeTag type="caffeine" />}
+    />
   );
 }
