@@ -1,4 +1,4 @@
-import { productListQueryOptions, recentProductListQueryOptions } from '@/api/queryOptions';
+import { productListQueryOptions, recentProductListQueryOptions, type Product } from '@/api/queryOptions';
 import AsyncBoundary from '@/components/AsyncBoundary';
 import ErrorSection from '@/components/ErrorSection';
 import { Text } from '@/ui-lib';
@@ -7,7 +7,6 @@ import { Box, Grid, styled } from 'styled-system/jsx';
 import BannerSection from './components/BannerSection';
 import CategorySelector from './components/CategorySelector';
 import CurrentLevelSection from './components/CurrentLevelSection';
-import GetFilteredProducts from './components/GetFilteredProducts';
 import GetPointInfo from './components/GetPointInfo';
 import RecentPurchasedProductList from './components/RecentPurchasedProductList';
 import { CheeseItem, CrackerItem, TeaItem } from './components/SellingProductItem';
@@ -51,22 +50,23 @@ function HomePage() {
                 ]}
               >
                 {currentTab => (
-                  <GetFilteredProducts products={products} currentTab={currentTab}>
-                    {filteredProducts => (
-                      <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
-                        {filteredProducts.map(product => {
-                          switch (product.category) {
-                            case 'CHEESE':
-                              return <CheeseItem key={product.id} product={product} />;
-                            case 'CRACKER':
-                              return <CrackerItem key={product.id} product={product} />;
-                            case 'TEA':
-                              return <TeaItem key={product.id} product={product} />;
-                          }
-                        })}
-                      </Grid>
-                    )}
-                  </GetFilteredProducts>
+                  <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
+                    {products
+                      .filter(product => matchesCategory(product.category, currentTab))
+                      .map(product => {
+                        switch (product.category) {
+                          case 'CHEESE':
+                            return <CheeseItem key={product.id} product={product} />;
+                          case 'CRACKER':
+                            return <CrackerItem key={product.id} product={product} />;
+                          case 'TEA':
+                            return <TeaItem key={product.id} product={product} />;
+                          default:
+                            product.category satisfies never;
+                            return null;
+                        }
+                      })}
+                  </Grid>
                 )}
               </CategorySelector>
             </styled.section>
@@ -78,3 +78,6 @@ function HomePage() {
 }
 
 export default HomePage;
+
+const matchesCategory = (category: Product['category'], currentTab: string) =>
+  currentTab === 'ALL' || category === currentTab;
