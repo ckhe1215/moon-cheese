@@ -14,7 +14,7 @@ export default function CartCounter({ product, min, max }: { product: Product; m
   };
 
   const cartItemCount = cart[product.id] ?? 0;
-  const isEmptyCart = cartItemCount === (min ?? 1);
+  const isEmptyCart = cartItemCount === (min ?? 0);
   const isMaxStock = cartItemCount >= (max ?? product.stock);
 
   return (
