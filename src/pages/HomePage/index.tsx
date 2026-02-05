@@ -4,7 +4,7 @@ import { Text } from '@/ui-lib';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { Box, Grid, styled } from 'styled-system/jsx';
 import BannerSection from './components/BannerSection';
-import CategorySelector from './components/CategorySelector';
+import CategorySelector, { type TabType } from './components/CategorySelector';
 import CurrentLevelSection from './components/CurrentLevelSection';
 import GetPointInfo from './components/GetPointInfo';
 import RecentPurchasedProductList from './components/RecentPurchasedProductList';
@@ -78,5 +78,5 @@ function HomePage() {
 
 export default HomePage;
 
-const matchesCategory = (category: Product['category'], currentTab: string) =>
+const matchesCategory = (category: Product['category'], currentTab: TabType) =>
   currentTab === 'ALL' || category === currentTab;
