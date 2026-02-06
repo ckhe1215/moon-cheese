@@ -1,7 +1,7 @@
 import type { Product } from '@/api/queryOptions';
 import { createContext, useContext, useState } from 'react';
 
-type CartItem = {
+export type CartItem = {
   quantity: number;
 } & Product;
 
