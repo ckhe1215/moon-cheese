@@ -1,15 +1,15 @@
 import BannerSection from './components/BannerSection';
 import CurrentLevelSection from './components/CurrentLevelSection';
-import ProductListSection from './components/ProductListSection';
-import RecentPurchaseSection from './components/RecentPurchaseSection';
+import RecentPurchasedProductList from './components/RecentPurchasedProductList';
+import SellingProductList from './components/SellingProductList';
 
 function HomePage() {
   return (
     <>
       <BannerSection />
       <CurrentLevelSection />
-      <RecentPurchaseSection />
-      <ProductListSection />
+      <RecentPurchasedProductList />
+      <SellingProductList />
     </>
   );
 }

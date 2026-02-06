@@ -1,33 +1,57 @@
-import { Spacing } from '@/ui-lib';
-import ProductDetailSection from './components/ProductDetailSection';
+import { productIdQueryOptions } from '@/api/queryOptions';
+import AsyncBoundary from '@/components/AsyncBoundary';
+import { Spacing, Text } from '@/ui-lib';
+import { SuspenseQuery } from '@suspensive/react-query';
+import { useParams } from 'react-router';
+import { HStack, styled } from 'styled-system/jsx';
+import { CartActionProvider } from './components/CartActionProvider';
+import GetRecommendedProducts from './components/GetRecommendedProducts';
 import ProductInfoSection from './components/ProductInfoSection';
-import RecommendationSection from './components/RecommendationSection';
+import RecommendationItem from './components/RecommendationItem';
 import ThumbnailSection from './components/ThumbnailSection';
 
 function ProductDetailPage() {
+  const { id } = useParams();
+
   return (
     <>
-      <ThumbnailSection
-        images={[
-          '/moon-cheese-images/cracker-1-1.jpg',
-          '/moon-cheese-images/cracker-1-2.jpg',
-          '/moon-cheese-images/cracker-1-3.jpg',
-          '/moon-cheese-images/cracker-1-4.jpg',
-        ]}
-      />
-      <ProductInfoSection name={'치즈홀 크래커'} category={'cracker'} rating={4.0} price={10.85} quantity={2} />
-
+      <AsyncBoundary>
+        <SuspenseQuery {...productIdQueryOptions(Number(id))}>
+          {({ data: product }) => (
+            <>
+              <ThumbnailSection images={product.images} />
+              <CartActionProvider key={product.id} productId={product.id}>
+                <ProductInfoSection
+                  product={product}
+                  counter={<CartActionProvider.Counter product={product} />}
+                  addToCartButton={<CartActionProvider.Button product={product} />}
+                />
+              </CartActionProvider>
+              <Spacing size={2.5} />
+              <styled.section css={{ bg: 'background.01_white', px: 5, pt: 5, pb: 6 }}>
+                <Text variant="H2_Bold">상세 정보</Text>
+                <Spacing size={4} />
+                <Text variant="B2_Regular" color="neutral.02_gray">
+                  {product.description}
+                </Text>
+              </styled.section>
+            </>
+          )}
+        </SuspenseQuery>
+      </AsyncBoundary>
       <Spacing size={2.5} />
 
-      <ProductDetailSection
-        description={
-          '"달 표면에서 가 수확한 특별한 구멍낸 크래커." 달의 분화구를 연상시키는 다지한과 고소한 풍미가 특징인 크래커. 치즈와의 궁합을 고려한 절묘한 비율로, 어느 데어링 메뉴도 잘 어울립니다.'
-        }
-      />
-
-      <Spacing size={2.5} />
-
-      <RecommendationSection />
+      <AsyncBoundary>
+        <styled.section css={{ bg: 'background.01_white', px: 5, pt: 5, pb: 6 }}>
+          <Text variant="H2_Bold">추천 제품</Text>
+          <Spacing size={4} />
+          <HStack gap={1.5} overflowX="auto">
+            <GetRecommendedProducts productId={Number(id)}>
+              {product => <RecommendationItem product={product} />}
+            </GetRecommendedProducts>
+          </HStack>
+        </styled.section>
+      </AsyncBoundary>
     </>
   );
 }
