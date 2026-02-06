@@ -12,10 +12,10 @@ import EmptyCartSection from './components/EmptyCartSection';
 import ShoppingCartSection from './components/ShoppingCartSection';
 
 function ShoppingCartPage() {
-  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState<string>('Express');
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState<'EXPRESS' | 'PREMIUM'>('EXPRESS');
   const { data } = useSuspenseQuery(meQueryOptions());
   const { cart } = useCart();
-  const gradeDeliveryFee = data?.grade === 'EXPLORER' ? 2 : data?.grade === 'PILOT' ? 1 : 0;
+  const gradeDeliveryFee = data.grade === 'EXPLORER' ? 2 : data.grade === 'PILOT' ? 1 : 0;
   const totalPrice = cart.reduce((total, product) => total + product.price * product.quantity, 0);
   const totalDeliveryFee = totalPrice > 30 ? 0 : gradeDeliveryFee;
 
@@ -32,20 +32,24 @@ function ShoppingCartPage() {
               description="2-3일 후 도착 예정"
               icon={<DeliveryIcon size={28} />}
               price={0}
-              isSelected={selectedDeliveryMethod === 'Express'}
-              onClick={() => setSelectedDeliveryMethod('Express')}
+              isSelected={selectedDeliveryMethod === 'EXPRESS'}
+              onClick={() => setSelectedDeliveryMethod('EXPRESS')}
             />
             <DeliveryItem
               title="Premium"
               description="당일 배송"
               icon={<RocketIcon size={28} />}
               price={totalDeliveryFee}
-              isSelected={selectedDeliveryMethod === 'Premium'}
-              onClick={() => setSelectedDeliveryMethod('Premium')}
+              isSelected={selectedDeliveryMethod === 'PREMIUM'}
+              onClick={() => setSelectedDeliveryMethod('PREMIUM')}
             />
           </Stack>
         </styled.section>
-        <CheckoutSection />
+        <CheckoutSection
+          totalPrice={totalPrice}
+          totalDeliveryFee={totalDeliveryFee}
+          selectedDeliveryMethod={selectedDeliveryMethod}
+        />
       </EmptyCartGuard>
     </AsyncBoundary>
   );
