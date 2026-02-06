@@ -18,7 +18,12 @@ export default function CartCounter({ product, min, max }: { product: Product; m
   const isMaxStock = cartItemCount >= (max ?? product.stock);
 
   return (
-    <Counter.Root>
+    <Counter.Root
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
       <Counter.Minus onClick={() => handleRemoveFromCart(product.id)} disabled={isEmptyCart} />
       <Counter.Display value={cartItemCount} />
       <Counter.Plus onClick={() => handleAddToCart(product.id)} disabled={isMaxStock} />
