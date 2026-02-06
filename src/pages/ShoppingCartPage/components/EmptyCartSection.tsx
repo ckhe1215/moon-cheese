@@ -1,5 +1,6 @@
-import { Center, styled, VStack } from 'styled-system/jsx';
 import { Button, Text } from '@/ui-lib';
+import { Link } from 'react-router';
+import { Center, styled, VStack } from 'styled-system/jsx';
 
 function EmptyCartSection() {
   return (
@@ -12,7 +13,9 @@ function EmptyCartSection() {
         />
         <Text variant="B2_Bold">장바구니가 비어있어요</Text>
         <Text variant="C2_Regular">{'아직 아무것도 담지 않으셨네요\n쇼핑을 시작해볼까요?'}</Text>
-        <Button>쇼핑하러 가기</Button>
+        <Link to="/">
+          <Button>쇼핑하러 가기</Button>
+        </Link>
       </VStack>
     </Center>
   );
