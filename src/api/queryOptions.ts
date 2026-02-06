@@ -77,9 +77,10 @@ export const gradePointQueryOptions = () =>
 export const productListQueryOptions = () =>
   queryOptions({
     queryKey: ['product-list'],
-    queryFn: async (): Promise<{ products: Product[] }> => {
+    queryFn: async (): Promise<Product[]> => {
       const response = await fetch('/api/product/list');
-      return response.json();
+      const data = await response.json();
+      return data.products;
     },
   });
 

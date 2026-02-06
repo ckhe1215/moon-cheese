@@ -25,7 +25,7 @@ export default function SellingProductList() {
             >
               {currentTab => (
                 <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
-                  {data.products
+                  {data
                     .filter(product => matchesCategory(product.category, currentTab))
                     .map(product => {
                       switch (product.category) {
