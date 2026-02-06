@@ -8,7 +8,7 @@ import ShoppingCartItem from './ShoppingCartItem';
 
 export default function ShoppingCartListItem({ product }: { product: Product }) {
   const { removeAllFromCart } = useCart();
-  const { id, name, category, images, description, price } = product;
+  const { name, category, images, description, price } = product;
 
   return (
     <ShoppingCartItem.Root>
@@ -19,7 +19,7 @@ export default function ShoppingCartListItem({ product }: { product: Product }) 
           title={name}
           description={description}
           onDelete={() => {
-            removeAllFromCart(id);
+            removeAllFromCart(product);
           }}
         />
         <ShoppingCartItem.Footer>

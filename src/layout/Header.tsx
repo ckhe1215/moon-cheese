@@ -49,7 +49,7 @@ function BackButton() {
 function ShoppingCartButton() {
   const { cart } = useCart();
   const navigate = useNavigate();
-  const cartItemCount = Object.values(cart).length;
+  const cartItemCount = cart.length;
 
   return (
     <Badge content={cartItemCount} size="sm" cursor="pointer" onClick={() => navigate('/shopping-cart')}>

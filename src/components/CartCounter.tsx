@@ -3,17 +3,17 @@ import type { Product } from '@/server/data';
 import { Counter } from '@/ui-lib';
 
 export default function CartCounter({ product, min, max }: { product: Product; min?: number; max?: number }) {
-  const { cart, addToCart, removeFromCart } = useCart();
+  const { addToCart, removeFromCart, getItemQuantity } = useCart();
 
-  const handleAddToCart = (productId: number) => {
-    addToCart(productId);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
   };
 
-  const handleRemoveFromCart = (productId: number) => {
-    removeFromCart(productId);
+  const handleRemoveFromCart = (product: Product) => {
+    removeFromCart(product);
   };
 
-  const cartItemCount = cart[product.id] ?? 0;
+  const cartItemCount = getItemQuantity(product.id);
   const isEmptyCart = cartItemCount === (min ?? 0);
   const isMaxStock = cartItemCount >= (max ?? product.stock);
 
@@ -24,9 +24,9 @@ export default function CartCounter({ product, min, max }: { product: Product; m
         e.stopPropagation();
       }}
     >
-      <Counter.Minus onClick={() => handleRemoveFromCart(product.id)} disabled={isEmptyCart} />
+      <Counter.Minus onClick={() => handleRemoveFromCart(product)} disabled={isEmptyCart} />
       <Counter.Display value={cartItemCount} />
-      <Counter.Plus onClick={() => handleAddToCart(product.id)} disabled={isMaxStock} />
+      <Counter.Plus onClick={() => handleAddToCart(product)} disabled={isMaxStock} />
     </Counter.Root>
   );
 }

@@ -23,8 +23,8 @@ function ProductDetailPage() {
               <CartActionProvider key={product.id} productId={product.id}>
                 <ProductInfoSection
                   product={product}
-                  counter={<CartActionProvider.Counter productId={product.id} stock={product.stock} />}
-                  addToCartButton={<CartActionProvider.Button productId={product.id} />}
+                  counter={<CartActionProvider.Counter product={product} />}
+                  addToCartButton={<CartActionProvider.Button product={product} />}
                 />
               </CartActionProvider>
               <Spacing size={2.5} />

@@ -1,3 +1,4 @@
+import type { Product } from '@/api/queryOptions';
 import { useCart } from '@/providers/CartProvider';
 import { Button, Counter } from '@/ui-lib';
 import { createContext, useContext, useState } from 'react';
@@ -15,8 +16,8 @@ const CartActionContext = createContext<CartActionContextType>({
 });
 
 export const CartActionProvider = ({ productId, children }: { productId: number; children: React.ReactNode }) => {
-  const { cart } = useCart();
-  const cartItemCount = cart[productId] ?? 0;
+  const { getItemQuantity } = useCart();
+  const cartItemCount = getItemQuantity(productId);
   const [count, setCount] = useState(cartItemCount);
 
   const handleCountMinus = () => {
@@ -38,48 +39,48 @@ export const CartActionProvider = ({ productId, children }: { productId: number;
   );
 };
 
-function CartButton({ productId }: { productId: number }) {
+function CartButton({ product }: { product: Product }) {
   const { count } = useContext(CartActionContext);
-  const { cart, addToCartWithCount, removeAllFromCart } = useCart();
+  const { addToCartWithCount, removeAllFromCart, getItemQuantity } = useCart();
 
-  const handleAddToCart = (productId: number, count: number) => {
-    addToCartWithCount(productId, count);
+  const handleAddToCart = (product: Product, count: number) => {
+    addToCartWithCount(product, count);
   };
 
-  const handleRemoveFromCart = (productId: number) => {
-    removeAllFromCart(productId);
+  const handleRemoveFromCart = (product: Product) => {
+    removeAllFromCart(product);
   };
 
-  const cartItemCount = cart[productId] ?? 0;
+  const cartItemCount = getItemQuantity(product.id);
 
   if (cartItemCount > 0) {
     return (
-      <Button fullWidth color="primary" size="lg" onClick={() => handleRemoveFromCart(productId)}>
+      <Button fullWidth color="primary" size="lg" onClick={() => handleRemoveFromCart(product)}>
         장바구니에서 제거
       </Button>
     );
   }
 
   return (
-    <Button fullWidth color="primary" size="lg" onClick={() => handleAddToCart(productId, count)}>
+    <Button fullWidth color="primary" size="lg" onClick={() => handleAddToCart(product, count)}>
       장바구니 담기
     </Button>
   );
 }
 
-function CartCounter({ productId, stock }: { productId: number; stock: number }) {
+function CartCounter({ product }: { product: Product }) {
   const { count, handleCountMinus, handleCountPlus } = useContext(CartActionContext);
-  const { cart } = useCart();
+  const { getItemQuantity } = useCart();
 
-  const isCounterDisable = cart[productId] > 0;
+  const isCounterDisable = getItemQuantity(product.id) > 0;
   const isEmptyCart = count === 0;
-  const isMaxStock = count >= stock;
+  const isMaxStock = count >= product.stock;
 
   return (
     <Counter.Root>
       <Counter.Minus onClick={handleCountMinus} disabled={isCounterDisable || isEmptyCart} />
       <Counter.Display value={count} />
-      <Counter.Plus onClick={() => handleCountPlus(stock)} disabled={isCounterDisable || isMaxStock} />
+      <Counter.Plus onClick={() => handleCountPlus(product.stock)} disabled={isCounterDisable || isMaxStock} />
     </Counter.Root>
   );
 }

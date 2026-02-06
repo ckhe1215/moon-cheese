@@ -1,4 +1,5 @@
 import type { Product } from '@/api/queryOptions';
+import PriceDisplay from '@/components/PriceDisplay';
 import { RatingGroup, Spacing, Text } from '@/ui-lib';
 import Tag, { type TagType } from '@/ui-lib/components/tag';
 import { Box, Divider, Flex, Stack, styled } from 'styled-system/jsx';
@@ -28,7 +29,9 @@ function ProductInfoSection({ product, counter, addToCartButton }: ProductInfoSe
           <RatingGroup value={product.rating} readOnly label={`${product.rating.toFixed(1)}`} />
         </Stack>
         <Spacing size={4} />
-        <Text variant="H1_Bold">${product.price.toFixed(2)}</Text>
+        <Text variant="H1_Bold">
+          <PriceDisplay price={product.price} />
+        </Text>
       </Box>
 
       <Spacing size={5} />
